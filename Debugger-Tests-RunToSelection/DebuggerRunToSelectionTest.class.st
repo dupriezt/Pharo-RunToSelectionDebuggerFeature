@@ -106,7 +106,7 @@ DebuggerRunToSelectionTest >> setUp [
 { #category : #'instance creation' }
 DebuggerRunToSelectionTest >> testRunToSelectionInContext1 [
 "Testing: Run to here in a block that is evaluated by another function"
-	| start stop |
+	| start stop targetNode |
 	start := 82.
 	stop := 81.
 	sessionRTS1 runToSelection: (Interval from: start to: stop) inContext: contextRTS1.
@@ -116,13 +116,14 @@ DebuggerRunToSelectionTest >> testRunToSelectionInContext1 [
 	self assert: (contextRTS1 pc isNotNil).
 	self assert: (sessionRTS1 interruptedContext method == (self class>>#contextForRunToSelectionTest1)).
 	"When the test runner notifies that the following assert is wrong, the pc of contextRTS1 will be nil because it notifies after the test execution has been completed. Put a halt before this assert to get the real value of the pc after the execution navigation operation from above. This behaviour is demonstrated by the fact the previous isNotNil assert did NOT fail, so the pc was not nil when the asserts were checked"
-	self assert: (contextRTS1 pc  == 37).
+	targetNode := (MessageNodeFinder findMessageNodesSatisfying: [ :msgNode | msgNode arguments size = 1 and: [ (msgNode arguments at: 1) = (RBLiteralValueNode value: 4)  and: [ msgNode selector = #+ ] ] ] inNode: ((self class >>#contextForRunToSelectionTest1) ast body)) first.
+	self assert: ((contextRTS1 method sourceNodeForPC: contextRTS1 pc) == targetNode).
 ]
 
 { #category : #'instance creation' }
 DebuggerRunToSelectionTest >> testRunToSelectionInContext2 [
 "Testing: Run to here in code without blocks"
-	| start stop |
+	| start stop targetNode |
 	start := 50.
 	stop := 49.
 	sessionRTS2 runToSelection: (Interval from: start to: stop) inContext: contextRTS2.
@@ -132,13 +133,14 @@ DebuggerRunToSelectionTest >> testRunToSelectionInContext2 [
 	self assert: (contextRTS2 pc isNotNil).
 	self assert: (sessionRTS2 interruptedContext method == (self class>>#contextForRunToSelectionTest2)).
 	"When the test runner notifies that the following assert is wrong, the pc of contextRTS2 will be nil because it notifies after the test execution has been completed. Put a halt before this assert to get the real value of the pc after the execution navigation operation from above. This behaviour is demonstrated by the fact the previous isNotNil assert did NOT fail, so the pc was not nil when the asserts were checked"
-	self assert: (contextRTS2 pc  == 35).
+	targetNode := (MessageNodeFinder findMessageNodesSatisfying: [ :msgNode | msgNode arguments size = 1 and: [ (msgNode arguments at: 1) = (RBLiteralValueNode value: 3)  and: [ msgNode selector = #+ ] ] ] inNode: ((self class >>#contextForRunToSelectionTest2) ast body)) first.
+	self assert: ((contextRTS2 method sourceNodeForPC: contextRTS2 pc) == targetNode).
 ]
 
 { #category : #'instance creation' }
 DebuggerRunToSelectionTest >> testRunToSelectionInContext3 [
 "Testing: Run to here in a block that is directly evaluated in the same method by sending it the `value` message"
-	| start stop |
+	| start stop targetNode |
 	start := 71.
 	stop := 70.
 	sessionRTS3 runToSelection: (Interval from: start to: stop) inContext: contextRTS3.
@@ -148,13 +150,14 @@ DebuggerRunToSelectionTest >> testRunToSelectionInContext3 [
 	self assert: (contextRTS3 pc isNotNil).
 	self assert: (sessionRTS3 interruptedContext method == (self class>>#contextForRunToSelectionTest3)).
 	"When the test runner notifies that the following assert is wrong, the pc of contextRTS3 will be nil because it notifies after the test execution has been completed. Put a halt before this assert to get the real value of the pc after the execution navigation operation from above. This behaviour is demonstrated by the fact the previous isNotNil assert did NOT fail, so the pc was not nil when the asserts were checked"
-	self assert: (contextRTS3 pc  == 54).
+	targetNode := (MessageNodeFinder findMessageNodesSatisfying: [ :msgNode | msgNode arguments size = 1 and: [ (msgNode arguments at: 1) = (RBLiteralValueNode value: 4)  and: [ msgNode selector = #+ ] ] ] inNode: ((self class >>#contextForRunToSelectionTest3) ast body)) first.
+	self assert: ((contextRTS3 method sourceNodeForPC: contextRTS3 pc) == targetNode).
 ]
 
 { #category : #'instance creation' }
 DebuggerRunToSelectionTest >> testRunToSelectionInContext4 [
 "Testing: Run to here in a block that is not evaluated."
-	| start stop |
+	| start stop targetNode |
 	start := 89.
 	stop := 88.
 	sessionRTS4 runToSelection: (Interval from: start to: stop) inContext: contextRTS4.
@@ -164,5 +167,6 @@ DebuggerRunToSelectionTest >> testRunToSelectionInContext4 [
 	self assert: (contextRTS4 pc isNotNil).
 	self assert: (sessionRTS4 interruptedContext method == (self class>>#contextForRunToSelectionTest4)).
 	"When the test runner notifies that the following assert is wrong, the pc of contextRTS4 will be nil because it notifies after the test execution has been completed. Put a halt before this assert to get the real value of the pc after the execution navigation operation from above. This behaviour is demonstrated by the fact the previous isNotNil assert did NOT fail, so the pc was not nil when the asserts were checked"
-	self assert: (contextRTS4 pc  == 62).
+	targetNode := (MessageNodeFinder findMessageNodesSatisfying: [ :msgNode | msgNode arguments size = 1 and: [ (msgNode arguments at: 1) = (RBLiteralValueNode value: 5)  and: [ msgNode selector = #+ ] ] ] inNode: ((self class >>#contextForRunToSelectionTest4) ast body)) first.
+	self assert: ((contextRTS4 method sourceNodeForPC: contextRTS4 pc) == targetNode).
 ]
